@@ -55,9 +55,12 @@ cfg_vgg19 = [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512,
 vgg16 = VGG(make_layers(cfg_vgg16))
 vgg19 = VGG(make_layers(cfg_vgg19))
 
+def init_weights(m):
+    if isinstance(m, nn.Linear) or isinstance(m, nn.Conv2d):
+        torch.nn.init.xavier_uniform_(m.weight)
+
 transform = transforms.Compose([
     transforms.Resize((224, 224)), # resize 수행
-    # data augmentation 수행
     transforms.RandomHorizontalFlip(),
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
     transforms.ToTensor(),
@@ -70,8 +73,8 @@ testset = torchvision.datasets.CIFAR100(root='./data', train=False, download=Tru
 trainloader = DataLoader(trainset, batch_size=128, shuffle=True, num_workers=2)
 testloader = DataLoader(testset, batch_size=128, shuffle=False, num_workers=2)
 
-model = vgg19  
-#model = vgg16
+model = vgg19
+model.apply(init_weights)  # 가중치 초기화 적용
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = model.to(device)
 
