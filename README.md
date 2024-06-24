@@ -1,2 +1,2 @@
 # Deep-learning-for-image-recognitiion
-LeNet, VGG
+임성원 LeNet, VGG
